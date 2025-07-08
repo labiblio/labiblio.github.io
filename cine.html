@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8"> <!--define la codificación de caracteres. Abarca todos los signos, emojis y acentos (incluido el “é” de “técnico”)-->
+<meta name="viewport" content="width=device-width, initial-scale=1"> <!--convierte el diseño en líquido, adaptándolo al ancho de la pantalla del dispositivo, sin zoom automático.-->
 <title>labiblio</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">  
 <style>
@@ -30,6 +30,7 @@
     justify-content: center;
   }
   .item {
+    position: relative;
     background: #fff;
     border-radius: 6px;
     overflow: hidden;
@@ -54,11 +55,14 @@
     margin-bottom: 8px;
   }
   .link {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     display: block;
     padding: 8px;
     background:#566573;
     color: white;
-    text-decoration:none;
+    text-decoration: none;
     border-radius:0 0 6px 6px;
   }
 </style>
