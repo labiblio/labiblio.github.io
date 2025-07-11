@@ -120,4 +120,156 @@
         caret-color: var(--accent);
       }
       .input-wrap ::placeholder {
-        color: va
+        color: var(--text-secondary);
+        opacity: 0.85;
+      }
+      .cursor {
+        width: 2px;
+        height: 1.3em;
+        background: #000; /* negro */
+        animation: blink 1s steps(2, start) infinite;
+      }
+      @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+
+      /* Scrollbar */
+      .messages::-webkit-scrollbar { width: 8px; }
+      .messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 4px; }
+    </style>
+  </head>
+
+  <body>
+    <div class="page-wrap" id="root">
+      <!-- header -->
+      <header class="header header--fixed">
+        <div class="header__inner">
+          <div class="header__logo"><a href="index.html"><img src="assets/img/logo.png" alt="" style="width: 122px;" /></a></div>
+          <div class="navbar-toggle" id="fs-button"><div class="navbar-icon"><span></span></div></div>
+        </div>
+        <div class="fullscreenmenu__module" trigger="#fs-button">
+          <nav class="overlay-menu">
+            <ul class="wil-menu-list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="work.html">Work</a></li>
+              <li><a href="blog.html">Blog</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <!-- End / header -->
+
+      <!-- Content -->
+      <div class="wil-content">
+        <section class="awe-section">
+          <div class="container">
+            <div class="page-title pb-40">
+              <h2 class="page-title__title">Chat con Inteligencia Artificial</h2>
+              <p class="page-title__text">Conectado vía n8n — pregúntame lo que quieras.</p>
+              <div class="page-title__divider"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="awe-section bg-gray">
+          <div class="container">
+            <div class="chat-box">
+              <main class="messages" id="messages"></main>
+              <form id="chatForm" class="input-wrap" autocomplete="off">
+                <span class="cursor"></span>
+                <input id="userInput" type="text" placeholder="¿En qué puedo ayudarte?" />
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+      <!-- End / Content -->
+
+      <!-- footer -->
+      <div class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-lg-6">
+              <p class="footer__coppy">2018 &copy; Copyright <a href="http://awe7.com/">Awe7</a>. All rights Reserved.</p>
+            </div>
+            <div class="col-md-6 col-lg-6">
+              <div class="footer__social">
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-facebook"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-twitter"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-linkedin"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-behance"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-vimeo"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End / footer -->
+    </div>
+
+    <!-- Vendors -->
+    <script type="text/javascript" src="assets/vendors/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/imagesloaded/imagesloaded.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/isotope-layout/isotope.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery-one-page/jquery.nav.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.matchHeight/jquery.matchHeight.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/masonry-layout/masonry.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.waypoints/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/swiper/swiper.jquery.js"></script>
+    <script type="text/javascript" src="assets/vendors/menu/menu.js"></script>
+    <script type="text/javascript" src="assets/vendors/typed/typed.min.js"></script>
+
+    <!-- Chat logic -->
+    <script>
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('userInput');
+      const messages = document.getElementById('messages');
+
+      function appendMsg(text, role) {
+        const div = document.createElement('div');
+        div.className = `msg ${role}`;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      async function askAI(question) {
+        try {
+          const res = await fetch('https://YOUR-N8N-DOMAIN.com/webhook/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: question })
+          });
+          if (!res.ok) throw new Error('Network response was not ok');
+          const data = await res.json();
+          return data.reply || '[respuesta vacía]';
+        } catch (err) {
+          console.error(err);
+          return '⚠️ Error de conexión con el servicio.';
+        }
+      }
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (!q) return;
+        appendMsg(q, 'user');
+        input.value = '';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'msg ai';
+        placeholder.textContent = '⏳ Escribiendo…';
+        messages.appendChild(placeholder);
+        messages.scrollTop = messages.scrollHeight;
+
+        const answer = await askAI(q);
+        placeholder.textContent = answer;
+      });
+    </script>
+  </body>
+</html>
