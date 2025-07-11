@@ -1,170 +1,239 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8">
-    <title>labiblio · ia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --background: #0d1117;
-      --accent: #1f6feb;
-      --text-primary: #e6edf3;
-      --text-secondary: #8b949e;
-      --bubble-user: #1f6feb33;
-      --bubble-ai: #30363d;
-    }
+    <title>Work detail</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Fonts -->
+    <link rel="stylesheet" type="text/css" href="assets/fonts/fontawesome/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/fonts/pe-icon/pe-icon.css" />
+    <!-- Vendors -->
+    <link rel="stylesheet" type="text/css" href="assets/vendors/bootstrap/grid.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendors/magnific-popup/magnific-popup.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendors/swiper/swiper.css" />
+    <!-- App & fonts -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700" />
+    <link rel="stylesheet" type="text/css" id="app-stylesheet" href="assets/css/main.css" />
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <![endif]-->
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--background);
-      color: var(--text-primary);
-      display: grid;
-      height: 100vh;
-      grid-template-rows: auto 1fr auto;
-    }
-
-    /* ---- Encabezado fijo y simple ---- */
-    header {
-      padding: 1rem 2rem;
-      border-bottom: 1px solid #21262d;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
-
-    /* ---- Área de mensajes (galería) ---- */
-    .messages {
-      padding: 2rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .msg {
-      max-width: 60%;
-      padding: 1rem 1.2rem;
-      border-radius: 0.8rem;
-      line-height: 1.5;
-      font-size: 1rem;
-      position: relative;
-    }
-    .msg.user {
-      align-self: flex-end;
-      background: var(--bubble-user);
-      backdrop-filter: blur(4px);
-    }
-    .msg.ai {
-      align-self: flex-start;
-      background: var(--bubble-ai);
-    }
-
-    /* ---- Input line con cursor parpadeante ---- */
-    .input-wrap {
-      padding: 1rem 2rem;
-      border-top: 1px solid #21262d;
-    }
-    .input-line {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      position: relative;
-    }
-    .input-line input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 1.1rem;
-      color: var(--text-primary);
-      caret-color: var(--accent);
-    }
-    ::placeholder {
-      color: var(--text-secondary);
-      opacity: 0.8;
-    }
-    /* Cursor parpadeante extra (opcional) */
-    .cursor {
-      width: 2px;
-      height: 1.2em;
-      background: var(--accent);
-      animation: blink 1s steps(2, start) infinite;
-    }
-    @keyframes blink { 0% {opacity:1;} 50% {opacity:0;} 100% {opacity:1;} }
-
-    /* Scrollbar sutil */
-    .messages::-webkit-scrollbar {
-      width: 8px;
-    }
-    .messages::-webkit-scrollbar-thumb {
-      background: #30363d;
-      border-radius: 4px;
-    }
-  </style>
-</head>
-<body>
-  <header>🤖 AI Chat</header>
-
-  <!-- Galería de mensajes -->
-  <main class="messages" id="messages">
-    <!-- Mensajes se inyectan aquí -->
-  </main>
-
-  <!-- Línea de entrada -->
-  <div class="input-wrap">
-    <form id="chatForm" class="input-line" autocomplete="off">
-      <input id="userInput" type="text" placeholder="¿En qué puedo ayudarte?" autofocus>
-      <span class="cursor"></span>
-    </form>
-  </div>
-
-  <script>
-    const form = document.getElementById('chatForm');
-    const input = document.getElementById('userInput');
-    const messages = document.getElementById('messages');
-
-    /** Helpers **/
-    function appendMessage(text, role) {
-      const div = document.createElement('div');
-      div.className = `msg ${role}`;
-      div.textContent = text;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    /** Interfaz con n8n **/
-    async function askAI(question) {
-      try {
-        const res = await fetch('https://YOUR-N8N-DOMAIN.com/webhook/ai-chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: question })
-        });
-        if (!res.ok) throw new Error('Network response was not ok');
-        const data = await res.json();
-        return data.reply || '[respuesta vacía]';
-      } catch (err) {
-        console.error(err);
-        return '⚠️ Error de conexión con el servicio.';
+    <!-- Estilos específicos del chat -->
+    <style>
+      :root {
+        --chat-bg: #0d1117;
+        --accent: #1f6feb;
+        --text-primary: #e6edf3;
+        --text-secondary: #8b949e;
+        --bubble-user: #1f6feb33;
+        --bubble-ai: #30363d;
       }
-    }
+      .chat-box {
+        display: flex;
+        flex-direction: column;
+        height: 70vh; /* Ajusta según gusto */
+        background: var(--chat-bg);
+        border-radius: 0.8rem;
+        overflow: hidden;
+      }
+      .messages {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .msg {
+        max-width: 70%;
+        padding: 1rem 1.2rem;
+        border-radius: 0.8rem;
+        line-height: 1.6;
+        font-size: 1rem;
+        position: relative;
+        word-wrap: break-word;
+      }
+      .msg.user {
+        align-self: flex-end;
+        background: var(--bubble-user);
+        backdrop-filter: blur(4px);
+      }
+      .msg.ai {
+        align-self: flex-start;
+        background: var(--bubble-ai);
+      }
+      .input-wrap {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #21262d;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .input-wrap input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        caret-color: var(--accent);
+      }
+      .input-wrap ::placeholder {
+        color: var(--text-secondary);
+        opacity: 0.8;
+      }
+      .cursor {
+        width: 2px;
+        height: 1.2em;
+        background: var(--accent);
+        animation: blink 1s steps(2, start) infinite;
+      }
+      @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      /* Scrollbar */
+      .messages::-webkit-scrollbar { width: 8px; }
+      .messages::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    </style>
+  </head>
 
-    /** Manejo del formulario **/
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const question = input.value.trim();
-      if (!question) return;
-      appendMessage(question, 'user');
-      input.value = '';
+  <body>
+    <div class="page-wrap" id="root">
+      <!-- header (sin cambios) -->
+      <header class="header header--fixed">
+        <div class="header__inner">
+          <div class="header__logo"><a href="index.html"><img src="assets/img/logo.png" alt="" style="width: 122px;" /></a></div>
+          <div class="navbar-toggle" id="fs-button"><div class="navbar-icon"><span></span></div></div>
+        </div>
+        <div class="fullscreenmenu__module" trigger="#fs-button">
+          <nav class="overlay-menu">
+            <ul class="wil-menu-list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="work.html">Work</a></li>
+              <li><a href="blog.html">Blog</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <!-- End / header -->
 
-      // Espera / indicador
-      appendMessage('⏳ Escribiendo…', 'ai');
-      const placeholderMsg = messages.lastChild;
+      <!-- Content -->
+      <div class="wil-content">
+        <!-- Section título -->
+        <section class="awe-section">
+          <div class="container">
+            <div class="page-title pb-40">
+              <h2 class="page-title__title">Chat con Inteligencia Artificial</h2>
+              <p class="page-title__text">Conectado vía n8n – pregúntame lo que quieras.</p>
+              <div class="page-title__divider"></div>
+            </div>
+          </div>
+        </section>
+        <!-- End título -->
 
-      const answer = await askAI(question);
-      placeholderMsg.textContent = answer;
-    });
-  </script>
-</body>
+        <!-- Section chat -->
+        <section class="awe-section bg-gray">
+          <div class="container">
+            <div class="chat-box">
+              <main class="messages" id="messages"></main>
+              <form id="chatForm" class="input-wrap" autocomplete="off">
+                <input id="userInput" type="text" placeholder="¿En qué puedo ayudarte?" />
+                <span class="cursor"></span>
+              </form>
+            </div>
+          </div>
+        </section>
+        <!-- End chat -->
+      </div>
+      <!-- End / Content -->
+
+      <!-- footer (sin cambios) -->
+      <div class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-lg-6">
+              <p class="footer__coppy">2018 &copy; Copyright <a href="http://awe7.com/">Awe7</a>. All rights Reserved.</p>
+            </div>
+            <div class="col-md-6 col-lg-6">
+              <div class="footer__social">
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-facebook"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-twitter"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-linkedin"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-behance"></i></a>
+                <a class="social-icon" href="#"><i class="social-icon__icon fa fa-vimeo"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End / footer -->
+    </div>
+
+    <!-- Vendors -->
+    <script type="text/javascript" src="assets/vendors/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/imagesloaded/imagesloaded.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/isotope-layout/isotope.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery-one-page/jquery.nav.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.matchHeight/jquery.matchHeight.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/masonry-layout/masonry.pkgd.js"></script>
+    <script type="text/javascript" src="assets/vendors/jquery.waypoints/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="assets/vendors/swiper/swiper.jquery.js"></script>
+    <script type="text/javascript" src="assets/vendors/menu/menu.js"></script>
+    <script type="text/javascript" src="assets/vendors/typed/typed.min.js"></script>
+
+    <!-- Script de chat -->
+    <script>
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('userInput');
+      const messages = document.getElementById('messages');
+
+      function appendMsg(text, role) {
+        const div = document.createElement('div');
+        div.className = `msg ${role}`;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      async function askAI(question) {
+        try {
+          const res = await fetch('https://YOUR-N8N-DOMAIN.com/webhook/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: question })
+          });
+          if (!res.ok) throw new Error('Network response was not ok');
+          const data = await res.json();
+          return data.reply || '[respuesta vacía]';
+        } catch (err) {
+          console.error(err);
+          return '⚠️ Error de conexión con el servicio.';
+        }
+      }
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (!q) return;
+        appendMsg(q, 'user');
+        input.value = '';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'msg ai';
+        placeholder.textContent = '⏳ Escribiendo…';
+        messages.appendChild(placeholder);
+        messages.scrollTop = messages.scrollHeight;
+
+        const answer = await askAI(q);
+        placeholder.textContent = answer;
+      });
+    </script>
+  </body>
 </html>
