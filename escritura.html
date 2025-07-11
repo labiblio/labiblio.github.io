@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Galería de Escritura</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 🖋️  Tipografías libres de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --bg-color: #0a0d13;      /* Fondo global oscuro */
+        --card-bg: rgba(255, 255, 255, 0.06);
+        --card-bg-hover: rgba(255, 255, 255, 0.12);
+        --text-color: #f4f4f4;
+        --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.5);
+        --transition: 0.35s cubic-bezier(0.45, 0, 0.2, 1);
+      }
+
+      /* ---------- RESET BÁSICO ---------- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-color);
+        background: var(--bg-color);
+        min-height: 100vh;
+        line-height: 1.55;
+        overflow-x: hidden;
+      }
+
+      /* ---------- WORD CLOUD (palabras‑imagen) ---------- */
+      .word-cloud {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;   /* Para que el ratón “atraviese” las palabras */
+        z-index: -1;            /* Detrás de todo */
+        overflow: hidden;
+      }
+      .word-cloud img {
+        position: absolute;
+        opacity: 0.14;          /* Súper sutil */
+        filter: grayscale(1) brightness(1.6);
+        user-select: none;
+        max-width: 35vw;        /* Ajusta según gusto */
+      }
+
+      /* Ejemplo: posiciones aleatorias (puedes afinarlas en línea o vía JS) */
+      .word-1 { top: 12%; left: 6%; transform: rotate(-12deg); }
+      .word-2 { top: 38%; left: 72%; transform: rotate(8deg); }
+      .word-3 { top: 68%; left: 24%; transform: rotate(-4deg); }
+
+      /* ---------- GALERÍA DE TEXTO ---------- */
+      .gallery {
+        display: grid;
+        gap: 1.6rem;
+        padding: 6rem clamp(1rem, 4vw, 4rem);
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.8rem 2rem;
+        backdrop-filter: blur(4px);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+      .card:hover {
+        background: var(--card-bg-hover);
+        transform: translateY(-8px) scale(1.04);
+        box-shadow: var(--shadow-hover);
+      }
+      .card h3 {
+        margin-bottom: 0.6rem;
+        font-weight: 600;
+        font-size: 1.4rem;
+      }
+      .card p {
+        font-weight: 300;
+        font-size: 1rem;
+      }
+
+      /* Tamaños personalizados (añade o modifica según necesidad) */
+      .size-xs  { grid-row: span 1; grid-column: span 1; }
+      .size-sm  { grid-row: span 1; grid-column: span 2; }
+      .size-md  { grid-row: span 2; grid-column: span 2; }
+      .size-lg  { grid-row: span 2; grid-column: span 3; }
+    </style>
+  </head>
+
+  <body>
+    <!-- 🖼️  Palabras sueltas como imágenes (colócalas donde prefieras) -->
+    <div class="word-cloud">
+      <img src="/assets/word-inspirar.png" alt="inspirar" class="word-1" />
+      <img src="/assets/word-valentia.png" alt="valentía" class="word-2" />
+      <img src="/assets/word-silencio.png" alt="silencio" class="word-3" />
+      <!-- Agrega más imágenes/posiciones a voluntad -->
+    </div>
+
+    <!-- ✨  Galería de bloques de texto -->
+    <section class="gallery">
+      <article class="card size-sm">
+        <h3>El susurro del viento</h3>
+        <p>
+          Entre montañas y quebradas, solo el viento conoce el rastro de los
+          pensamientos que no me atreví a decir.
+        </p>
+      </article>
+
+      <article class="card size-xs">
+        <h3>Vacío</h3>
+        <p>Pausa. Respirar. Reinventar.</p>
+      </article>
+
+      <article class="card size-md">
+        <h3>Luz apacible</h3>
+        <p>
+          Se cuela por la rendija, lenta, como quien no sabe que amanece. Colorea
+          pedazos de polvo suspendido y me invita a levantar la pluma.
+        </p>
+      </article>
+
+      <article class="card size-lg">
+        <h3>Oda a la valentía</h3>
+        <p>
+          Vacilar es humano, dar un paso –por pequeño que parezca– es heroico. De
+          eso se forjan las historias que perduran cuando el papel ya se ha
+          deshecho.
+        </p>
+      </article>
+
+      <!-- Duplica o genera más <article> según necesidad -->
+    </section>
+
+    <!-- Opcional: JavaScript para animar aparición o reordenar aleatoriamente -->
+    <script>
+      // Ejemplo simple: fade‑in on load
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.card').forEach((el, i) => {
+          el.style.opacity = 0;
+          el.style.transform += ' translateY(20px)';
+          setTimeout(() => {
+            el.style.transition = 'opacity 800ms ease, transform 800ms ease';
+            el.style.opacity = 1;
+            el.style.transform = el.style.transform.replace(' translateY(20px)', '');
+          }, 100 + i * 150);
+        });
+      });
+    </script>
+  </body>
+</html>
